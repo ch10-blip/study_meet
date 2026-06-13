@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KU-Matching | 고려대 시간표 기반 스터디 매칭 서비스</title>
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="고려대학교 학우들을 위한 빈 시간표 기반 자동 스터디 매칭 서비스. 내 빈 시간표만 입력하고 최적의 스터디원들을 찾아보세요.">
+  <meta name="keywords" content="고려대학교, 시간표, 스터디 매칭, 대학생 스터디, 에브리타임, 시간 매칭, 자동 매칭">
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="KU-Matching | 시간표 기반 스터디 매칭 서비스">
+  <meta property="og:description" content="빈 시간표만 등록하면 알아서 겹치는 학우와 최적의 스터디를 연결해 주는 고려대 전용 플랫폼">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  
+  <!-- App Container (Mobile Mock Frame & Desktop Dashboard Responsive Wrapper) -->
+  <div class="app-wrapper">
+    
+    <!-- Top Header -->
+    <header class="app-header">
+      <div class="header-left" id="header-logo-container">
+        <div class="logo-symbol">
+          <i data-lucide="users" class="crimson-icon"></i>
+        </div>
+        <span class="logo-text">KU<span class="crimson-text">-Matching</span></span>
+      </div>
+      <div class="header-right">
+        <!-- Notification Button -->
+        <button class="icon-btn" id="notification-btn" aria-label="알림 확인">
+          <i data-lucide="bell"></i>
+          <span class="badge" id="notification-badge" style="display: none;">0</span>
+        </button>
+        <!-- Profile Button or Login Redirection -->
+        <div id="header-user-status">
+          <button class="btn btn-outline btn-sm nav-login-btn" id="btn-header-login">로그인</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Notification Dropdown -->
+    <div class="notification-dropdown" id="notification-dropdown" style="display: none;">
+      <div class="dropdown-header">
+        <h3>알림 목록</h3>
+        <button id="clear-notifications" class="text-btn">모두 지우기</button>
+      </div>
+      <div class="notification-list" id="notification-list-container">
+        <div class="empty-state">새로운 알림이 없습니다.</div>
+      </div>
+    </div>
+
+    <!-- Main Content Area (Dynamic Views) -->
+    <main class="app-content">
+      
+      <!-- 1. HOME VIEW -->
+      <section id="view-home" class="app-view active">
+        <div class="hero-section animate-fade-in">
+          <div class="hero-tag">고려대학교 전용 서비스</div>
+          <h1>빈 시간표 입력하고<br><span class="gradient-text">스터디원 자동 매칭</span></h1>
+          <p>시간 맞추느라 머리 아픈 에타/카톡 조율은 이제 그만! 나의 빈 공강 시간에 맞춰 스터디 팀원을 바로 연결해 드립니다.</p>
+          
+          <div class="hero-buttons">
+            <button class="btn btn-primary btn-lg" id="btn-hero-start">매칭 시작하기</button>
+            <button class="btn btn-secondary btn-lg" id="btn-hero-explore">스터디 둘러보기</button>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <h2 id="stat-match-count">1,248</h2>
+            <span>누적 매칭 수</span>
+          </div>
+          <div class="stat-card">
+            <h2 id="stat-study-count">56</h2>
+            <span>개설된 스터디</span>
+          </div>
+          <div class="stat-card">
+            <h2>98.2%</h2>
+            <span>만족율</span>
+          </div>
+        </div>
+
+        <div class="features-section">
+          <h3>매칭 프로세스</h3>
+          <div class="process-timeline">
+            <div class="timeline-step">
+              <div class="step-num">1</div>
+              <h4>시간표 입력</h4>
+              <p>요일별 공강 시간을 클릭 및 드래그하여 입력합니다.</p>
+            </div>
+            <div class="timeline-step">
+              <div class="step-num">2</div>
+              <h4>자동 교집합 연산</h4>
+              <p>스터디 시간표와 대조하여 시간 겹침 비율(%)을 연산합니다.</p>
+            </div>
+            <div class="timeline-step">
+              <div class="step-num">3</div>
+              <h4>즉시 매칭 및 개설</h4>
+              <p>최적의 스터디에 지원하거나 직접 만들어 인원을 모집합니다.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. AUTH VIEW (LOGIN / REGISTER) -->
+      <section id="view-auth" class="app-view">
+        <div class="auth-card card">
+          <div class="auth-tabs">
+            <button class="auth-tab active" id="tab-login-btn">로그인</button>
+            <button class="auth-tab" id="tab-signup-btn">회원가입</button>
+          </div>
+
+          <!-- Login Form -->
+          <div class="auth-form-container" id="form-login-container">
+            <form id="form-login" novalidate>
+              <div class="form-group">
+                <label for="login-email">이메일</label>
+                <div class="input-wrapper">
+                  <i data-lucide="mail"></i>
+                  <input type="email" id="login-email" placeholder="korea.ac.kr 이메일 주소" required>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="login-password">비밀번호</label>
+                <div class="input-wrapper">
+                  <i data-lucide="lock"></i>
+                  <input type="password" id="login-password" placeholder="비밀번호" required>
+                </div>
+              </div>
+              <div class="error-message" id="login-error" style="display: none;">이메일 또는 비밀번호가 올바르지 않습니다.</div>
+              <button type="submit" class="btn btn-primary btn-block">로그인</button>
+            </form>
+          </div>
+
+          <!-- Signup Form -->
+          <div class="auth-form-container" id="form-signup-container" style="display: none;">
+            <form id="form-signup" novalidate>
+              <div class="form-group">
+                <label for="signup-email">고려대 이메일 (@korea.ac.kr)</label>
+                <div class="input-inline">
+                  <div class="input-wrapper">
+                    <i data-lucide="mail"></i>
+                    <input type="email" id="signup-email" placeholder="email@korea.ac.kr" required>
+                  </div>
+                  <button type="button" class="btn btn-secondary btn-sm" id="btn-send-code">인증코드 발송</button>
+                </div>
+                <small class="form-help">고려대학교 재학생 인증을 위해 학교 메일이 필요합니다.</small>
+              </div>
+
+              <div class="form-group" id="group-verification-code" style="display: none;">
+                <label for="signup-code">인증번호 입력</label>
+                <div class="input-inline">
+                  <div class="input-wrapper">
+                    <i data-lucide="shield-check"></i>
+                    <input type="text" id="signup-code" placeholder="인증번호 6자리" maxlength="6">
+                  </div>
+                  <button type="button" class="btn btn-outline btn-sm" id="btn-verify-code">인증 확인</button>
+                </div>
+                <div class="success-message" id="verification-success" style="display: none;">이메일 인증이 완료되었습니다.</div>
+                <div class="error-message" id="verification-error" style="display: none;">인증코드가 올바르지 않습니다.</div>
+              </div>
+
+              <div class="form-group">
+                <label for="signup-password">비밀번호</label>
+                <div class="input-wrapper">
+                  <i data-lucide="lock"></i>
+                  <input type="password" id="signup-password" placeholder="영문+숫자 혼합 8자 이상" required>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="signup-nickname">닉네임</label>
+                <div class="input-wrapper">
+                  <i data-lucide="user"></i>
+                  <input type="text" id="signup-nickname" placeholder="닉네임" required>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="signup-dept">학과</label>
+                  <select id="signup-dept" required>
+                    <option value="">학과 선택</option>
+                    <option value="컴퓨터학과">컴퓨터학과</option>
+                    <option value="경영학과">경영학과</option>
+                    <option value="경제학과">경제학과</option>
+                    <option value="통계학과">통계학과</option>
+                    <option value="전기전자공학부">전기전자공학부</option>
+                    <option value="기계공학부">기계공학부</option>
+                    <option value="국어국문학과">국어국문학과</option>
+                    <option value="정치외교학과">정치외교학과</option>
+                    <option value="기타">기타 학과</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="signup-grade">학년</label>
+                  <select id="signup-grade" required>
+                    <option value="">학년 선택</option>
+                    <option value="1">1학년</option>
+                    <option value="2">2학년</option>
+                    <option value="3">3학년</option>
+                    <option value="4">4학년 이상</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="error-message" id="signup-error" style="display: none;">모든 항목을 올바르게 채워주세요.</div>
+              <button type="submit" class="btn btn-primary btn-block" id="btn-signup-submit" disabled>회원가입 완료</button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. TIMETABLE INPUT VIEW -->
+      <section id="view-timetable" class="app-view">
+        <div class="view-header">
+          <h2>내 시간표 등록</h2>
+          <p class="description">내가 수업을 듣거나 불가능한 시간(바쁜 시간)을 선택해 주세요.<br><strong>선택되지 않은 흰색 영역(공강 시간)</strong>을 기준으로 매칭이 진행됩니다.</p>
+        </div>
+
+        <div class="timetable-card card">
+          <div class="timetable-legend">
+            <div class="legend-item"><span class="legend-color occupied"></span><span>수업 시간 (매칭 제외)</span></div>
+            <div class="legend-item"><span class="legend-color free"></span><span>비어 있는 공강 (매칭 활용)</span></div>
+          </div>
+
+          <!-- Interactive Timetable Grid -->
+          <div class="timetable-scroll-container">
+            <div class="timetable-grid-wrapper" id="my-timetable-grid">
+              <!-- JS will inject the table headers and cells here -->
+            </div>
+          </div>
+
+          <div class="timetable-actions">
+            <button class="btn btn-outline" id="btn-reset-timetable">
+              <i data-lucide="rotate-ccw"></i>초기화
+            </button>
+            <button class="btn btn-primary" id="btn-save-timetable">
+              <i data-lucide="save"></i>시간표 저장하기
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. EXPLORE/SEARCH VIEW -->
+      <section id="view-explore" class="app-view">
+        <div class="view-header flex-header">
+          <div>
+            <h2>스터디 탐색</h2>
+            <p class="description">나와 공강 시간이 많이 겹치는 최적의 스터디 그룹을 찾아보세요.</p>
+          </div>
+          <button class="btn btn-primary btn-sm" id="btn-goto-create">
+            <i data-lucide="plus"></i>스터디 개설
+          </button>
+        </div>
+
+        <!-- Search & Filter Controls -->
+        <div class="filter-card card">
+          <div class="search-bar">
+            <i data-lucide="search" class="search-icon"></i>
+            <input type="text" id="search-input" placeholder="스터디 이름, 과목명 또는 키워드 입력...">
+          </div>
+          
+          <div class="filter-options">
+            <div class="filter-item">
+              <label for="filter-day">요일</label>
+              <select id="filter-day">
+                <option value="all">전체</option>
+                <option value="Mon">월요일</option>
+                <option value="Tue">화요일</option>
+                <option value="Wed">수요일</option>
+                <option value="Thu">목요일</option>
+                <option value="Fri">금요일</option>
+                <option value="Sat">토요일</option>
+                <option value="Sun">일요일</option>
+              </select>
+            </div>
+            
+            <div class="filter-item">
+              <label for="filter-capacity">인원</label>
+              <select id="filter-capacity">
+                <option value="all">전체</option>
+                <option value="2-4">2 ~ 4명</option>
+                <option value="5-7">5 ~ 7명</option>
+                <option value="8-10">8 ~ 10명</option>
+              </select>
+            </div>
+
+            <div class="filter-item">
+              <label for="filter-location">장소</label>
+              <select id="filter-location">
+                <option value="all">전체</option>
+                <option value="도서관">백주년기념관 / 도서관</option>
+                <option value="카페">카페</option>
+                <option value="온라인">온라인(Zoom/Discord)</option>
+                <option value="스터디룸">안암역 스터디룸</option>
+                <option value="기타">직접 설정</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Study List Container -->
+        <div class="study-list-grid" id="study-list-container">
+          <!-- JS will render study cards dynamically -->
+        </div>
+      </section>
+
+      <!-- 5. STUDY DETAIL VIEW -->
+      <section id="view-detail" class="app-view">
+        <div class="detail-actions-top">
+          <button class="text-btn" id="btn-back-to-explore">
+            <i data-lucide="arrow-left"></i>목록으로 돌아가기
+          </button>
+        </div>
+
+        <div class="detail-grid">
+          <!-- Details Left (Info) -->
+          <div class="detail-info-card card">
+            <div class="detail-header-info">
+              <div class="study-category" id="detail-subject">통계학</div>
+              <h2 id="detail-title">고대 경영 통계학 A+ 목표 스터디</h2>
+              <div class="leader-info">
+                <div class="avatar">KU</div>
+                <div>
+                  <span class="leader-name" id="detail-leader-name">안암호랑이</span>
+                  <span class="leader-dept" id="detail-leader-meta">경영학과 · 3학년</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="info-table">
+              <div class="info-row">
+                <div class="info-label"><i data-lucide="users"></i>인원 현황</div>
+                <div class="info-val" id="detail-members">3 / 6 명 (최대 6명)</div>
+              </div>
+              <div class="info-row">
+                <div class="info-label"><i data-lucide="map-pin"></i>선호 장소</div>
+                <div class="info-val" id="detail-location">백주년기념관 스터디룸</div>
+              </div>
+              <div class="info-row">
+                <div class="info-label"><i data-lucide="clock"></i>스터디 시간대</div>
+                <div class="info-val" id="detail-time-text">월요일 13시~16시, 수요일 15시~17시</div>
+              </div>
+            </div>
+
+            <div class="detail-body-content">
+              <h3>스터디 소개</h3>
+              <p id="detail-description">경영통계학 중간고사 및 기말고사 대비 문제풀이와 핵심이론 요약을 같이 진행할 스터디원을 모집합니다. 특히 매칭율이 높으신 학우분들을 환영합니다!</p>
+            </div>
+
+            <!-- Join / Management Action Area -->
+            <div class="detail-join-action" id="detail-action-container">
+              <!-- JS will render CTA button (Apply, Contact info, Cancel application, or Manage study) -->
+            </div>
+          </div>
+
+          <!-- Details Right (Timetable Overlap Comparison) -->
+          <div class="detail-comparison-card card">
+            <div class="comparison-header">
+              <h3>공강 시간 겹침 분석</h3>
+              <div class="match-percentage" id="detail-match-rate-huge">75%</div>
+            </div>
+            
+            <p class="description">내 빈 시간표(공강)와 본 스터디 모임 예정 시간 중 **일치하는 시간**이 표시됩니다.</p>
+            
+            <div class="legend-row">
+              <div class="legend-item"><span class="legend-color match-overlap"></span><span>내 공강 & 스터디 가능 시간 일치</span></div>
+              <div class="legend-item"><span class="legend-color match-conflict"></span><span>스터디 시간이나 내 수업 시간 불일치</span></div>
+            </div>
+
+            <div class="timetable-scroll-container">
+              <div class="timetable-grid-wrapper" id="detail-comparison-grid">
+                <!-- JS will render static comparison timetable grid -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. CREATE STUDY VIEW -->
+      <section id="view-create" class="app-view">
+        <div class="view-header">
+          <h2>새 스터디 개설</h2>
+          <p class="description">스터디 모임 계획을 작성하고, 학우들과 매칭을 시작해 보세요.</p>
+        </div>
+
+        <div class="create-study-grid">
+          <!-- Form -->
+          <div class="create-form-card card">
+            <form id="form-create-study" novalidate>
+              <div class="form-group">
+                <label for="create-title">스터디명</label>
+                <input type="text" id="create-title" placeholder="예: 경영통계학 기출 풀이 스터디" required>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="create-subject">과목명 / 목적</label>
+                  <input type="text" id="create-subject" placeholder="예: 통계학, 토익, 알고리즘" required>
+                </div>
+                <div class="form-group">
+                  <label for="create-max-members">최대 모집 인원</label>
+                  <select id="create-max-members" required>
+                    <option value="2">2명</option>
+                    <option value="3">3명</option>
+                    <option value="4" selected>4명</option>
+                    <option value="5">5명</option>
+                    <option value="6">6명</option>
+                    <option value="7">7명</option>
+                    <option value="8">8명</option>
+                    <option value="9">9명</option>
+                    <option value="10">10명</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="create-location">선호 모임 장소</label>
+                <input type="text" id="create-location" placeholder="예: 백주년기념관, 안암역 근처 카페, 온라인(디스코드) 등" required>
+              </div>
+
+              <div class="form-group">
+                <label for="create-contact">오픈채팅방 링크 또는 연락처</label>
+                <div class="input-wrapper">
+                  <i data-lucide="link-2"></i>
+                  <input type="url" id="create-contact" placeholder="예: https://open.kakao.com/o/... 또는 카톡ID" required>
+                </div>
+                <small class="form-help">스터디 참여 수락된 학우에게만 공개되는 안전 연락망입니다.</small>
+              </div>
+
+              <div class="form-group">
+                <label for="create-description">스터디 내용 설명</label>
+                <textarea id="create-description" rows="5" placeholder="스터디 목적, 예상 진도, 선호하는 학습 분위기 등을 작성해 주세요." required></textarea>
+              </div>
+
+              <div class="error-message" id="create-error" style="display: none;">모든 항목을 입력해 주시고 모임 시간표를 최소 1칸 이상 지정해 주세요.</div>
+              <button type="submit" class="btn btn-primary btn-block">스터디 등록하기</button>
+            </form>
+          </div>
+
+          <!-- Study Timetable Selection -->
+          <div class="create-time-card card">
+            <h3>스터디 모임 시간 지정</h3>
+            <p class="description">이 스터디가 주로 진행될 요일과 시간대를 지정해 주세요. 학우들의 공강 시간표와 매칭율을 계산하는 기준이 됩니다.</p>
+            
+            <div class="timetable-scroll-container">
+              <div class="timetable-grid-wrapper" id="create-study-timetable-grid">
+                <!-- JS will inject timetable grid -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7. MY PAGE VIEW -->
+      <section id="view-mypage" class="app-view">
+        <div class="mypage-dashboard">
+          
+          <!-- My Profile Card -->
+          <div class="profile-card card">
+            <div class="profile-main">
+              <div class="profile-avatar"><i data-lucide="user" class="large-icon"></i></div>
+              <div class="profile-details">
+                <h2 id="mypage-nickname">고대호랑이</h2>
+                <p id="mypage-meta">경영학과 · 3학년</p>
+                <span class="user-badge-email" id="mypage-email">korea@korea.ac.kr</span>
+              </div>
+            </div>
+            
+            <div class="profile-actions">
+              <button class="btn btn-outline btn-sm" id="btn-mypage-edit-timetable">
+                <i data-lucide="calendar"></i>내 시간표 수정
+              </button>
+              <button class="btn btn-secondary btn-sm" id="btn-logout">
+                <i data-lucide="log-out"></i>로그아웃
+              </button>
+            </div>
+          </div>
+
+          <!-- Study Management Tabs -->
+          <div class="mypage-studies-card card">
+            <div class="mypage-tabs">
+              <button class="mypage-tab active" id="tab-joined-btn">참여 중인 스터디</button>
+              <button class="mypage-tab" id="tab-created-btn">내가 개설한 스터디</button>
+            </div>
+
+            <!-- Tab content 1: Joined/Applying Studies -->
+            <div class="mypage-tab-content" id="content-joined-studies">
+              <div class="study-card-list-vertical" id="list-joined-studies">
+                <!-- JS will render joined studies -->
+              </div>
+            </div>
+
+            <!-- Tab content 2: Created Studies & Applicant Management -->
+            <div class="mypage-tab-content" id="content-created-studies" style="display: none;">
+              <div class="study-card-list-vertical" id="list-created-studies">
+                <!-- JS will render created studies with applicants list -->
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Bottom Navigation Bar (Mobile / Responsive) -->
+    <nav class="app-nav">
+      <button class="nav-item active" id="nav-home" aria-label="홈">
+        <i data-lucide="home"></i>
+        <span>홈</span>
+      </button>
+      <button class="nav-item" id="nav-explore" aria-label="탐색">
+        <i data-lucide="compass"></i>
+        <span>스터디 찾기</span>
+      </button>
+      <button class="nav-item" id="nav-create" aria-label="스터디 개설">
+        <i data-lucide="plus-circle"></i>
+        <span>스터디 개설</span>
+      </button>
+      <button class="nav-item" id="nav-mypage" aria-label="마이페이지">
+        <i data-lucide="user"></i>
+        <span>마이페이지</span>
+      </button>
+    </nav>
+    
+  </div>
+
+  <!-- Confirmation Popup / Dialog Modal -->
+  <div class="modal-backdrop" id="modal-container" style="display: none;">
+    <div class="modal-card animate-scale-in">
+      <div class="modal-header">
+        <h3 id="modal-title">알림</h3>
+        <button class="close-btn" id="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body" id="modal-body">
+        정말로 해당 처리를 진행하시겠습니까?
+      </div>
+      <div class="modal-footer" id="modal-footer">
+        <button class="btn btn-secondary" id="modal-cancel-btn">취소</button>
+        <button class="btn btn-primary" id="modal-confirm-btn">확인</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Application Logic -->
+  <script src="app.js"></script>
+</body>
+</html>
